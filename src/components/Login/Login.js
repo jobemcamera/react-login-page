@@ -12,7 +12,7 @@ const emailReducer = (state, action) => {
     return { value: state.value, isValid: state.value.includes('@') };
   }
   return { value: '', isValid: false };
-}
+};
 
 const passwordReducer = (state, action) => {
   if (action.type === 'USER_INPUT') {
@@ -22,7 +22,7 @@ const passwordReducer = (state, action) => {
     return { value: state.value, isValid: state.value.trim().length > 6 };
   }
   return { value: '', isValid: false };
-}
+};
 
 const Login = (props) => {
   // o state emailIsValid depende do state enteredEmail (pode usar useReducer)
@@ -44,44 +44,46 @@ const Login = (props) => {
     isValid: null
   });
 
-  // useEffect(() => {
-  //   // será executado na primeira renderização e após 500ms o usuário terminar de digitar
-  //   const idenfifier = setTimeout(() => {
-  //     setFormIsValid(
-  //       enteredEmail.includes('@') && enteredPassword.trim().length > 6
-  //     );
-  //   }, 500);
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
 
-  //   // será executado todas as vezes que o usuário digitar após a primeira renderização
-  //   return () => { 
-  //     // limpa o setTimeout para contar de novo
-  //     clearTimeout(idenfifier);
-  //   }
-  // }, [enteredEmail, enteredPassword]) 
+  useEffect(() => {
+    // será executado na primeira renderização e após 500ms o usuário terminar de digitar
+    const idenfifier = setTimeout(() => {
+      setFormIsValid(
+        emailIsValid && passwordIsValid
+      );
+    }, 500);
 
+    // será executado todas as vezes que o usuário digitar após a primeira renderização
+    return () => {
+      // limpa o setTimeout para contar de novo
+      clearTimeout(idenfifier);
+    }
+  }, [emailIsValid, passwordIsValid])
 
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: 'USER_INPUT', val: event.target.value });
 
-    setFormIsValid(
-      event.target.value.includes('@') && passwordState.isValid
-    );
+    // setFormIsValid(
+    //   event.target.value.includes('@') && passwordState.isValid
+    // );
   };
 
   const passwordChangeHandler = (event) => {
-    dispatchPassword({ type: 'USER_INPUT', val: event.target.value })
+    dispatchPassword({ type: 'USER_INPUT', val: event.target.value });
 
-    setFormIsValid(
-      emailState.isValid && event.target.value.trim().length > 6
-    )
+    // setFormIsValid(
+    //    emailState.isValid && event.target.value.trim().length > 6
+    // );
   };
 
   const validateEmailHandler = () => {
-    dispatchEmail({ type: 'INPUT_BLUR' })
+    dispatchEmail({ type: 'INPUT_BLUR' });
   };
 
   const validatePasswordHandler = () => {
-    dispatchPassword({ type: 'INPUT_BLUR' })
+    dispatchPassword({ type: 'INPUT_BLUR' });
   };
 
   const submitHandler = (event) => {
@@ -93,7 +95,7 @@ const Login = (props) => {
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
         <div
-          className={`${classes.control} ${emailState === false ? classes.invalid : ''
+          className={`${classes.control} ${emailState.isValid === false ? classes.invalid : ''
             }`}
         >
           <label htmlFor="email">E-Mail</label>
