@@ -12,9 +12,18 @@ const Login = (props) => {
   const [formIsValid, setFormIsValid] = useState(false);
 
   useEffect(() => {
-    setFormIsValid(
-      enteredEmail.includes('@') && enteredPassword.trim().length > 6
-    );
+    // será executado na primeira renderização e após 500ms o usuário terminar de digitar
+    const idenfifier = setTimeout(() => {
+      setFormIsValid(
+        enteredEmail.includes('@') && enteredPassword.trim().length > 6
+      );
+    }, 500);
+
+    // será executado todas as vezes que o usuário digitar após a primeira renderização
+    return () => { 
+      // limpa o setTimeout para contar de novo
+      clearTimeout(idenfifier);
+    }
   }, [enteredEmail, enteredPassword])
 
   const emailChangeHandler = (event) => {
